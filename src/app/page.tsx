@@ -1,6 +1,8 @@
 import Todos from '_/components/todo'
 import { db } from '_/lib/db'
 
+// export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   const todos = await db.todo.findMany({
     orderBy: {
@@ -10,7 +12,7 @@ export default async function Home() {
 
   return (
     <div className='max-w-3xl mx-auto pt-20'>
-      <Todos data={todos} />
+      <Todos data={todos || []} />
     </div>
   )
 }
