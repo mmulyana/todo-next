@@ -1,7 +1,9 @@
 'use client'
 
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import type { Todo } from '@prisma/client'
 import { createTodo } from '_/action/createTodo'
+import { deleteTodo } from '_/action/deleteTodo'
 import { useOptimistic } from 'react'
 
 type Props = {
@@ -50,13 +52,21 @@ export default function Todos({ data }: Props) {
           </button>
         </form>
       </div>
-      <div className='mt-10'>
+      <div className='mt-10 space-y-3'>
         {optimisticTodos?.map((todo) => (
           <div
             key={todo.id}
-            className='px-2 py-1.5 rounded border border-gray-200 text-sm'
+            className='px-2 py-1.5 rounded border border-gray-200 text-sm flex justify-between items-center'
           >
             <p className='font-medium'>{todo.title}</p>
+            <div className='flex gap-2 items-center'>
+              <button
+                className='w-7 h-7 rounded hover:bg-red-50 flex items-center justify-center'
+                onClick={async () => await deleteTodo(todo.id)}
+              >
+                <XMarkIcon className='h-5 w-5 text-red-500' />
+              </button>
+            </div>
           </div>
         ))}
       </div>
