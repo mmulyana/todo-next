@@ -1,7 +1,9 @@
 'use client'
 
+import { CheckIcon } from '@heroicons/react/16/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import type { Todo } from '@prisma/client'
+import { checkTodo } from '_/action/checkTodo'
 import { createTodo } from '_/action/createTodo'
 import { deleteTodo } from '_/action/deleteTodo'
 import { useOptimistic } from 'react'
@@ -58,7 +60,22 @@ export default function Todos({ data }: Props) {
             key={todo.id}
             className='px-2 py-1.5 rounded border border-gray-200 text-sm flex justify-between items-center'
           >
-            <p className='font-medium'>{todo.title}</p>
+            <div className='flex gap-2 items-center'>
+              <button
+                onClick={async () => {
+                  await checkTodo(todo.id)
+                }}
+                className={[
+                  'h-6 w-6 rounded-full flex items-center justify-center border',
+                  todo.isDone
+                    ? 'bg-teal-500 border-teal-500 text-white'
+                    : 'bg-transparent border-gray-200 text-white hover:bg-teal-400 hover:text-white hover:border-teal-400',
+                ].join(' ')}
+              >
+                <CheckIcon className='w-5 h-5' />
+              </button>
+              <p className='font-medium'>{todo.title}</p>
+            </div>
             <div className='flex gap-2 items-center'>
               <button
                 className='w-7 h-7 rounded hover:bg-red-50 flex items-center justify-center'
