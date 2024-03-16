@@ -12,7 +12,7 @@ export default async function Home() {
 
   return (
     <div className='max-w-3xl mx-auto pt-20 px-4'>
-      <Todos data={todos || []} />
+      <Todos data={todos || []} type='add' />
     </div>
   )
 }

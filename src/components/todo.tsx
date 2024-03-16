@@ -1,17 +1,21 @@
 'use client'
 
 import { CheckIcon } from '@heroicons/react/16/solid'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { PencilIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import type { Todo } from '@prisma/client'
 import { checkTodo } from '_/action/checkTodo'
 import { createTodo } from '_/action/createTodo'
 import { deleteTodo } from '_/action/deleteTodo'
+import { updateTodo } from '_/action/updateTodo'
+import { useRouter } from 'next/navigation'
 import { useOptimistic } from 'react'
 
 type Props = {
   data: Todo[]
+  todo?: Todo | null
+  type: 'add' | 'edit'
 }
-export default function Todos({ data }: Props) {
+export default function Todos({ data, todo, type }: Props) {
   const [optimisticTodos, addNewTodo] = useOptimistic(
     data,
     (state: Todo[], newData: Todo) => [
@@ -19,12 +23,13 @@ export default function Todos({ data }: Props) {
       ...state,
     ]
   )
+  const router = useRouter()
 
   const action = async (formdata: FormData) => {
     let title = formdata.get('title')
     if (typeof title !== 'string') title = ''
 
-    const payload: Todo = {
+    let payload: Todo = {
       id: Math.random(),
       title,
       description: '',
@@ -33,8 +38,14 @@ export default function Todos({ data }: Props) {
       isDone: false,
     }
 
-    addNewTodo(payload)
-    await createTodo(payload)
+    if (type == 'add') {
+      addNewTodo(payload)
+      await createTodo(payload)
+      return
+    }
+    if (!todo) return
+    payload.id = todo.id
+    await updateTodo(payload)
   }
 
   return (
@@ -45,6 +56,8 @@ export default function Todos({ data }: Props) {
             name='title'
             placeholder='title'
             className='bg-gray-100 rounded px-2 py-1.5 border border-gray-200'
+            defaultValue={todo?.title || ''}
+            autoFocus
           />
           <button
             className='bg-blue-700 px-6 h-full rounded py-1.5 text-white ml-4'
@@ -77,6 +90,12 @@ export default function Todos({ data }: Props) {
               <p className='font-medium'>{todo.title}</p>
             </div>
             <div className='flex gap-2 items-center'>
+              <button
+                className='w-7 h-7 rounded hover:bg-blue-50 flex items-center justify-center'
+                onClick={() => router.push('/' + todo.id)}
+              >
+                <PencilIcon className='h-5 w-5 text-blue-500' />
+              </button>
               <button
                 className='w-7 h-7 rounded hover:bg-red-50 flex items-center justify-center'
                 onClick={async () => await deleteTodo(todo.id)}
