@@ -57,9 +57,11 @@ export default function Todos({ data, todo, type }: Props) {
             placeholder='title'
             className='bg-gray-100 rounded px-2 py-1.5 border border-gray-200'
             defaultValue={todo?.title || ''}
+            data-testid='input'
             autoFocus
           />
           <button
+            role='button'
             className='bg-blue-700 px-6 h-full rounded py-1.5 text-white ml-4'
             type='submit'
           >
